@@ -1,0 +1,73 @@
+Objective of the Task:
+
+The primary objective of this task was to fine-tune a pre-trained transformer model (specifically, BERT) to accurately classify news headlines into predefined topic categories. The task also included evaluating the model's performance using standard metrics (accuracy and F1-score) and deploying it via a web interface for interactive use.
+
+Methodology / Approach:
+
+Our approach followed a standard machine learning pipeline for text classification, leveraging the Hugging Face ecosystem for efficiency and state-of-the-art results:
+
+Environment Setup: 
+
+Installed necessary libraries: datasets for data handling, transformers for the BERT model and tokenizer, evaluate for metrics, accelerate for optimized training, and gradio for deployment.
+
+Data Loading: 
+
+Loaded the AG News Dataset from Hugging Face, which consists of news headlines and corresponding topic labels (World, Sports, Business, Sci/Tech).
+
+Data Preprocessing and Tokenization:
+
+Utilized the bert-base-uncased tokenizer to convert raw text headlines into numerical token IDs, attention masks, and token type IDs suitable for BERT.
+Applied truncation=True to handle headlines exceeding BERT's maximum input length.
+Removed the original 'text' column and renamed the 'label' column to 'labels' to align with the transformers library's expected input format.
+Set the dataset format to PyTorch tensors.
+
+Model Loading and Configuration: 
+
+Loaded AutoModelForSequenceClassification with bert-base-uncased and configured it for 4 output classes (corresponding to the AG News topics).
+
+Training Arguments Definition: 
+
+Defined TrainingArguments including hyperparameters like learning_rate (2e-5), per_device_train_batch_size (16), num_train_epochs (3), weight_decay, and specified evaluation_strategy='epoch' and save_strategy='epoch' to monitor and save the best model.
+
+Metric Calculation: 
+
+Implemented a compute_metrics function using evaluate library's accuracy and f1 metrics. The F1-score was calculated with average='weighted' to account for class imbalance.
+
+Model Training: 
+
+Used the Hugging Face Trainer class, providing the model, training arguments, datasets, tokenizer, data collator, and the compute_metrics function. The trainer.train() method was then called to fine-tune the model.
+
+Model Evaluation: 
+
+After training, the trainer.evaluate() method was used to get final performance metrics on the test set.
+
+Model Deployment: 
+
+Developed a simple interactive web application using Gradio. A predict function was created to tokenize input text, pass it through the fine-tuned model, and return the predicted topic along with probability scores for each class. The gr.Interface was then launched.
+
+Key Results or Observations
+
+High Performance: 
+
+The fine-tuned BERT model achieved strong performance on the AG News dataset, demonstrated by competitive accuracy and F1-scores on the test set. This highlights the effectiveness of transfer learning from large pre-trained language models for downstream NLP tasks.
+
+Efficiency with Hugging Face: 
+
+The transformers library significantly abstracted away the complexities of working with BERT, making the fine-tuning process relatively straightforward and efficient.
+
+Effective Data Preparation: 
+
+The tokenization and preprocessing steps successfully transformed the raw text data 
+into a format optimal for BERT's input requirements, ensuring proper model training.
+
+Interactive Deployment: 
+
+The Gradio interface provided an immediate and intuitive way to interact with the trained model, allowing for quick testing of new headlines and visualization of predictions.
+
+Resource Utilization: 
+
+Fine-tuning BERT, even bert-base-uncased, can be computationally intensive, benefiting greatly from GPU acceleration if available. The accelerate library implicitly aids in this.
+
+Interpretability (Probabilities): 
+
+Returning class probabilities in the Gradio interface offers more insight than just the top prediction, indicating the model's confidence across different categories.
